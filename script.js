@@ -17,12 +17,11 @@ let interactTimeout;
 let selectedCountryId = null; 
 let partnerCountryIds = new Set(); 
 
-// 重置函数：清空所有状态、飞线和全息标签
 function clearSelectionAndResume() {
     selectedCountryId = null;
     partnerCountryIds.clear(); 
     world.arcsData([]); 
-    world.labelsData([]); // 清空悬浮首都名称
+    world.labelsData([]); 
     world.polygonsData([...world.polygonsData()]); 
     d3.select("#tooltip-container").style("display", "none");
     d3.select("#side-panel").classed("hidden", true);
@@ -36,11 +35,8 @@ function resetAutoRotateTimer() {
 
 controls.addEventListener('start', () => { controls.autoRotate = false; clearTimeout(interactTimeout); });
 controls.addEventListener('end', resetAutoRotateTimer);
-
-// 点击海洋/空白处重置
 world.onGlobeClick(() => { clearSelectionAndResume(); });
 
-// 3. 数据处理配置：只保留 2019 年真实数据
 const rowConverter = function(d) {
     if (d.year === "2019" && d.tradeflow_baci !== "" && d.tradeflow_baci > 0) {
         return {
@@ -72,29 +68,25 @@ const loadingInterval = setInterval(() => {
     } else if (loadingProgress > 40 && loadingProgress <= 70) {
         statusText.innerText = "FETCHING CEPII BACI TRADE DATA...";
     } else if (loadingProgress > 70) {
-        statusText.innerText = "AUTO-ENCODING GLOBAL CAPITALS...";
+        statusText.innerText = "AUTO-ENCODING GLOBAL CAPITALS & FLAGS...";
     }
 }, 300);
 
 // ==========================================
-// 核心：全自动并发加载 (带降级保护 + 3D字体JSON)
+// 核心：全自动并发加载
 // ==========================================
 Promise.all([
     d3.json('DATA/countries-50m.json'),
     d3.csv('DATA/Gravity_V202211.csv', rowConverter),
-    // 加入降级保护，防止 API 失败导致国境线崩溃
-    d3.json('https://restcountries.com/v3.1/all?fields=ccn3,capital,capitalInfo').catch(err => []),
-    // 👇 关键修复：正确加载 Three.js 格式的加粗无衬线字体文件 👇
+    d3.json('https://restcountries.com/v3.1/all?fields=ccn3,capital,capitalInfo,cca2').catch(err => []),
     d3.json('https://unpkg.com/three/examples/fonts/helvetiker_bold.typeface.json')
 ]).then(([topologyData, tradeDataRaw, restCountriesData, boldFont]) => {
     
-    // 数据加载完毕，直奔 100%
     clearInterval(loadingInterval);
     progressText.innerText = '100%';
     statusText.innerText = "SYSTEM READY. LAUNCHING...";
     statusText.style.color = "#ffaa00"; 
     
-    // 遮罩淡出动画
     setTimeout(() => {
         overlay.style.opacity = '0';
         setTimeout(() => {
@@ -103,19 +95,18 @@ Promise.all([
         }, 800); 
     }, 600);
 
-    // 1. 自动解析 API 数据，构建全球动态首都库
     const dynamicCapitalsDB = {};
     if (restCountriesData && restCountriesData.length > 0) {
         restCountriesData.forEach(country => {
             if (country.ccn3 && country.capitalInfo && country.capitalInfo.latlng && country.capital && country.capital.length > 0) {
-                
                 const rawCapitalName = country.capital[0];
                 const cleanCapitalName = rawCapitalName.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
                 dynamicCapitalsDB[parseInt(country.ccn3, 10)] = {
                     name: cleanCapitalName,
                     lat: country.capitalInfo.latlng[0],
-                    lng: country.capitalInfo.latlng[1]
+                    lng: country.capitalInfo.latlng[1],
+                    cca2: country.cca2 ? country.cca2.toLowerCase() : null 
                 };
             }
         });
@@ -125,7 +116,6 @@ Promise.all([
     const countries = topojson.feature(topologyData, topologyData.objects.countries).features;
     const coordMap = {};
     
-    // 2. 将地图 Polygon 与我们的动态首都库进行智能合并
     countries.forEach(feature => {
         const numericId = parseInt(feature.id, 10);
         if (!isNaN(numericId)) {
@@ -134,7 +124,8 @@ Promise.all([
                     lng: dynamicCapitalsDB[numericId].lng, 
                     lat: dynamicCapitalsDB[numericId].lat, 
                     name: feature.properties.name,
-                    capitalName: dynamicCapitalsDB[numericId].name 
+                    capitalName: dynamicCapitalsDB[numericId].name,
+                    cca2: dynamicCapitalsDB[numericId].cca2 
                 };
             } else {
                 const centroid = d3.geoCentroid(feature);
@@ -142,7 +133,8 @@ Promise.all([
                     lng: centroid[0], 
                     lat: centroid[1], 
                     name: feature.properties.name,
-                    capitalName: "Center" 
+                    capitalName: "Center",
+                    cca2: null
                 };
             }
         }
@@ -162,9 +154,6 @@ Promise.all([
     const tooltipContainer = d3.select("#tooltip-container");
     const sidePanel = d3.select("#side-panel");
 
-    // ==========================================
-    // 配置 WebGL 全息首都标签层
-    // ==========================================
     world.labelsData([])
          .labelLat(d => d.lat)
          .labelLng(d => d.lng)
@@ -172,13 +161,9 @@ Promise.all([
          .labelSize(d => d.size)
          .labelDotRadius(d => d.dotRadius)
          .labelColor(d => d.color)
-         // 👇 唯一正确的 WebGL 字体修改法：应用我们上方解析好的 JSON 字体 👇
          .labelTypeFace(boldFont)
          .labelResolution(2);
 
-    // ==========================================
-    // 绘制多边形与交互细节
-    // ==========================================
     world.polygonsData(countries)
         .polygonCapColor(d => {
             const numericId = parseInt(d.id, 10);
@@ -217,11 +202,13 @@ Promise.all([
                 const countryName = cData ? cData.name : hoverD.properties.name;
                 const capString = (cData && cData.capitalName !== "Center") ? ` (${cData.capitalName})` : "";
                 
+                const flagHtml = (cData && cData.cca2) ? `<img src="https://flagcdn.com/w40/${cData.cca2}.png" class="tooltip-flag" alt="flag">` : '';
+
                 if (partnerCountryIds.has(hoverId)) {
                     tooltipContainer
                         .style("display", "block")
                         .html(`
-                            <div class="tooltip-title">${countryName}${capString}</div>
+                            <div class="tooltip-title">${flagHtml}${countryName}${capString}</div>
                             <div class="tooltip-detail">Role: <span class="trade-highlight">Trade Partner</span></div>
                         `);
                 } else {
@@ -229,7 +216,7 @@ Promise.all([
                     tooltipContainer
                         .style("display", "block")
                         .html(`
-                            <div class="tooltip-title">${countryName}${capString}</div>
+                            <div class="tooltip-title">${flagHtml}${countryName}${capString}</div>
                             <div class="tooltip-detail">2019 Total Exports: <span class="tooltip-highlight">${totalExport}</span></div>
                             <div class="tooltip-detail" style="font-size: 12px; margin-top:5px; color:#888;">(Click to lock & view details)</div>
                         `);
@@ -255,7 +242,7 @@ Promise.all([
 
             const topPartners = exportsFromHere
                 .sort((a, b) => b.flow - a.flow)
-                .slice(0, 20);
+                .slice(0, 10);
 
             selectedCountryId = clickId;
             partnerCountryIds.clear();
@@ -263,17 +250,33 @@ Promise.all([
 
             world.polygonsData([...world.polygonsData()]);
 
+            const flagHtml = (center.cca2) ? `<img src="https://flagcdn.com/w80/${center.cca2}.png" class="panel-flag" alt="flag">` : '';
+
             let panelHtml = `
-                <h2 class="panel-title">${coordMap[clickId].name}</h2>
-                <div class="panel-stat"><span>Global Partners</span> <span class="trade-highlight">${exportsFromHere.length}</span></div>
+                <div class="panel-header">
+                    ${flagHtml}
+                    <h2 class="panel-title">${coordMap[clickId].name}</h2>
+                </div>
+                <div class="panel-stat"><span>Global Export Destinations</span> <span class="trade-highlight">${exportsFromHere.length}</span></div>
                 <div class="panel-stat"><span>Total Export Vol.</span> <span class="tooltip-highlight">${formatFlow(totalExportVol * 1000)}</span></div>
-                <h3 class="panel-subtitle">Top Trade Partners</h3>
+                <h3 class="panel-subtitle">Top Trade Export Destinations</h3>
                 <ul class="panel-list">
             `;
 
             topPartners.slice(0, 10).forEach(p => {
-                 let pName = coordMap[p.dst_id] ? coordMap[p.dst_id].name : "Unknown";
-                 panelHtml += `<li><span class="p-name">${pName}</span> <span class="p-val">${formatFlow(p.flow * 1000)}</span></li>`;
+                 // ==========================================
+                 // 修改：全自动拉取前十大伙伴的国旗 HTML
+                 // ==========================================
+                 const partnerData = coordMap[p.dst_id];
+                 const pName = partnerData ? partnerData.name : "Unknown";
+                 
+                 // 全自动生成伙伴国旗 HTML (使用小尺寸 w40，应用 p-flag 样式)
+                 const pFlagHtml = (partnerData && partnerData.cca2) 
+                     ? `<img src="https://flagcdn.com/w40/${partnerData.cca2}.png" class="p-flag" alt="flag">` 
+                     : ''; // 如果查不到编码，Fallback 为空字符串
+                 // ==========================================
+
+                 panelHtml += `<li><span class="p-name">${pFlagHtml}${pName}</span> <span class="p-val">${formatFlow(p.flow * 1000)}</span></li>`;
             });
 
             panelHtml += `</ul>`;
@@ -283,7 +286,6 @@ Promise.all([
             
             const labelsArray = [];
 
-            // 你的设定保留：原点首都文字大小为 0.8，圆点为 0.25
             if (center.capitalName !== "Center") {
                 labelsArray.push({
                     lat: center.lat,
@@ -300,7 +302,6 @@ Promise.all([
                 if (dst) {
                     const normalizedWeight = route.flow / maxFlow; 
                     
-                    // 你的设定保留：目标点首都文字大小为 0.5，圆点为 0.15
                     if (dst.capitalName !== "Center") {
                         labelsArray.push({
                             lat: dst.lat,
