@@ -2,12 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Global BACI Trade Flows - Gravity Model</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
     
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -26,21 +29,23 @@
         <h1>Global Trade Flows</h1>
         <p class="subtitle">CEPII BACI Gravity Model</p>
         <div class="instructions">
-            <div class="instruction-item">
-                <span class="icon">🖱️</span>
-                <p><strong>Click a country</strong> to lock focus and highlight its top export destinations.</p>
-            </div>
-            <div class="instruction-item">
-                <span class="icon">🌊</span>
-                <p><strong>Click oceans</strong> to clear selection and resume auto-rotation.</p>
-            </div>
+            <div class="instruction-item"><span class="icon">🖱️</span><p><strong>Click a country</strong> to lock focus.</p></div>
+            <div class="instruction-item"><span class="icon">🌊</span><p><strong>Click oceans</strong> to clear selection.</p></div>
+            <div class="instruction-item"><span class="icon">⏳</span><p><strong>Drag timeline</strong> to filter years.</p></div>
         </div>
     </div>
     
     <div id="globe-container"></div>
-    
     <div id="tooltip-container"></div>
     <div id="side-panel" class="hidden"></div>
+
+    <div id="timeline-container" class="hud-box">
+        <div class="timeline-header">
+            <span class="timeline-title">Temporal Range</span>
+            <span id="year-display" class="year-highlight">2015 - 2019</span>
+        </div>
+        <div id="year-slider"></div>
+    </div>
 
     <script src="script.js"></script>
 </body>

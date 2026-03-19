@@ -197,3 +197,75 @@ h1 {
 .tooltip-detail { font-size: 14px; color: #aaa; font-weight: 500;}
 .tooltip-highlight { color: #00ffaa; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
 .trade-highlight { color: #ffaa00; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
+
+/* =========================================
+   新增：底部时间轴 Timeline 控制台
+   ========================================= */
+   #timeline-container {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%); /* 绝对居中 */
+    width: 600px;
+    z-index: 10;
+    padding: 15px 30px 25px 30px;
+    border-left: 1px solid rgba(0, 255, 170, 0.2); /* 取消左侧粗边框，改为底部居中面板 */
+    border-bottom: 4px solid #00ffaa; 
+    border-radius: 8px 8px 0 0;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.timeline-title {
+    font-size: 14px;
+    color: #8b949e;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+}
+
+.year-highlight {
+    font-size: 18px;
+    color: #00ffaa;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* 爆改 noUiSlider 主题，使其符合科幻看板风格 */
+.noUi-target {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    height: 6px;
+}
+
+.noUi-connect {
+    background: #00ffaa;
+    box-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+}
+
+.noUi-handle {
+    border: 2px solid #000;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(0, 255, 170, 0.8);
+    cursor: grab;
+}
+
+.noUi-handle:active { cursor: grabbing; }
+.noUi-handle:before, .noUi-handle:after { display: none; } /* 去掉默认的两条竖线 */
+
+/* 调整手柄位置让它完美居中 */
+.noUi-horizontal .noUi-handle {
+    width: 18px;
+    height: 18px;
+    right: -9px;
+    top: -6px;
+}
