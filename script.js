@@ -77,7 +77,7 @@ const loadingInterval = setInterval(() => {
 // ==========================================
 Promise.all([
     d3.json('DATA/countries-50m.json'),
-    d3.csv('DATA/Gravity_V202211.csv', rowConverter),
+    d3.csv('DATA/Gravity_2019.csv', rowConverter),
     d3.json('https://restcountries.com/v3.1/all?fields=ccn3,capital,capitalInfo,cca2').catch(err => []),
     d3.json('https://unpkg.com/three/examples/fonts/helvetiker_bold.typeface.json')
 ]).then(([topologyData, tradeDataRaw, restCountriesData, boldFont]) => {
