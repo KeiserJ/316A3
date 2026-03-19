@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Global BACI Trade Flows - Gravity Model</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loading-wrapper">
+            <div id="progress-text" class="creative-percentage">0%</div>
+            <div id="loading-status-text" class="loading-status">ESTABLISHING ORBITAL LINK...</div>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hud-box">
+        <h1>Global Trade Flows</h1>
+        <p class="subtitle">CEPII BACI Gravity Model</p>
+        <div class="instructions">
+            <div class="instruction-item">
+                <span class="icon">🖱️</span>
+                <p><strong>Click a country</strong> to lock focus and highlight its top trade partners.</p>
+            </div>
+            <div class="instruction-item">
+                <span class="icon">🌊</span>
+                <p><strong>Click oceans</strong> to clear selection and resume auto-rotation.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="globe-container"></div>
+    
+    <div id="tooltip-container"></div>
+    <div id="side-panel" class="hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>

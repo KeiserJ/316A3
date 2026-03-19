@@ -1,0 +1,175 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    color: #fff;
+    /* 基础阅读文本使用极度干净的 Inter 字体 */
+    font-family: 'Inter', sans-serif; 
+    overflow: hidden;
+}
+
+/* =========================================
+   Loading 面板
+   ========================================= */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #05080f; 
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease-out, visibility 0.8s;
+}
+
+.loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.creative-percentage {
+    font-size: 7rem;
+    font-weight: 700;
+    color: transparent; 
+    -webkit-text-stroke: 2px #00ffaa; 
+    /* 核心数据使用 Space Grotesk */
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 6px;
+    animation: neon-pulse 1.5s infinite alternate; 
+    margin-bottom: 10px;
+}
+
+.loading-status {
+    color: #00ffaa;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 3px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+}
+
+@keyframes neon-pulse {
+    0% { text-shadow: 0 0 10px rgba(0, 255, 170, 0.2); }
+    100% { text-shadow: 0 0 30px rgba(0, 255, 170, 0.8), 0 0 50px rgba(0, 255, 170, 0.4); }
+}
+
+/* =========================================
+   左上角 HUD 战术看板
+   ========================================= */
+#dashboard {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.hud-box {
+    background: rgba(13, 17, 23, 0.6);
+    border: 1px solid rgba(0, 255, 170, 0.2);
+    border-left: 4px solid #00ffaa;
+    border-radius: 0 8px 8px 0;
+    padding: 20px 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    max-width: 340px;
+}
+
+h1 { 
+    margin: 0 0 5px 0; 
+    font-size: 22px; 
+    letter-spacing: 1px; 
+    color: #fff; 
+    text-transform: uppercase;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+}
+
+.subtitle { 
+    color: #00ffaa; 
+    font-size: 13px; 
+    margin-bottom: 20px; 
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.instructions { display: flex; flex-direction: column; gap: 12px; }
+.instruction-item { display: flex; align-items: flex-start; gap: 10px; }
+.instruction-item .icon { font-size: 16px; margin-top: 2px; }
+.instruction-item p { margin: 0; font-size: 14px; color: #c9d1d9; line-height: 1.4; font-weight: 400;}
+.instruction-item strong { color: #fff; font-weight: 600; }
+
+/* =========================================
+   地球容器与其他组件
+   ========================================= */
+#globe-container { width: 100vw; height: 100vh; cursor: grab; }
+#globe-container:active { cursor: grabbing; }
+
+#tooltip-container {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    z-index: 100;
+    background: rgba(13, 17, 23, 0.85);
+    border: 1px solid rgba(0, 255, 170, 0.3);
+    border-radius: 8px;
+    padding: 12px 18px;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    display: none;
+}
+
+#side-panel {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 340px;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: rgba(13, 17, 23, 0.7);
+    border: 1px solid rgba(255, 170, 0, 0.3);
+    border-right: 4px solid #ffaa00;
+    border-radius: 8px 0 0 8px;
+    padding: 20px 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#side-panel.hidden { opacity: 0; transform: translateX(40px); pointer-events: none; }
+
+.panel-title { 
+    color: #fff; 
+    font-size: 20px; 
+    margin: 0 0 15px 0; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+    padding-bottom: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+}
+
+.panel-stat { font-size: 15px; color: #aaa; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: 500;}
+.panel-subtitle { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 12px 0; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
+.panel-list { list-style: none; padding: 0; margin: 0; }
+.panel-list li { display: flex; justify-content: space-between; font-size: 14px; padding: 10px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); font-weight: 500;}
+.panel-list li:last-child { border-bottom: none; }
+
+.p-name { color: #c9d1d9; }
+.p-val { color: #ffaa00; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;}
+
+.tooltip-title { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.5px;}
+.tooltip-detail { font-size: 14px; color: #aaa; font-weight: 500;}
+
+.tooltip-highlight { color: #00ffaa; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
+.trade-highlight { color: #ffaa00; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
