@@ -3,14 +3,10 @@ body {
     padding: 0;
     background-color: #000;
     color: #fff;
-    /* 基础阅读文本使用极度干净的 Inter 字体 */
-    font-family: 'Inter', sans-serif; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
     overflow: hidden;
 }
 
-/* =========================================
-   Loading 面板
-   ========================================= */
 #loading-overlay {
     position: fixed;
     top: 0;
@@ -36,10 +32,9 @@ body {
     font-weight: 700;
     color: transparent; 
     -webkit-text-stroke: 2px #00ffaa; 
-    /* 核心数据使用 Space Grotesk */
     font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: 6px;
-    animation: neon-pulse 1.5s infinite alternate; 
+    letter-spacing: 4px;
+    animation: neon-pulse 2s infinite alternate; 
     margin-bottom: 10px;
 }
 
@@ -51,17 +46,13 @@ body {
     letter-spacing: 3px;
     opacity: 0.8;
     text-transform: uppercase;
-    transition: color 0.3s ease;
 }
 
 @keyframes neon-pulse {
     0% { text-shadow: 0 0 10px rgba(0, 255, 170, 0.2); }
-    100% { text-shadow: 0 0 30px rgba(0, 255, 170, 0.8), 0 0 50px rgba(0, 255, 170, 0.4); }
+    100% { text-shadow: 0 0 30px rgba(0, 255, 170, 0.8), 0 0 60px rgba(0, 255, 170, 0.4); }
 }
 
-/* =========================================
-   左上角 HUD 战术看板
-   ========================================= */
 #dashboard {
     position: absolute;
     top: 30px;
@@ -71,14 +62,14 @@ body {
 }
 
 .hud-box {
-    background: rgba(13, 17, 23, 0.6);
+    background: rgba(13, 17, 23, 0.65);
     border: 1px solid rgba(0, 255, 170, 0.2);
     border-left: 4px solid #00ffaa;
     border-radius: 0 8px 8px 0;
     padding: 20px 25px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    max-width: 340px;
+    backdrop-filter: blur(10px);
+    max-width: 320px;
 }
 
 h1 { 
@@ -107,9 +98,6 @@ h1 {
 .instruction-item p { margin: 0; font-size: 14px; color: #c9d1d9; line-height: 1.4; font-weight: 400;}
 .instruction-item strong { color: #fff; font-weight: 600; }
 
-/* =========================================
-   地球容器与其他组件
-   ========================================= */
 #globe-container { width: 100vw; height: 100vh; cursor: grab; }
 #globe-container:active { cursor: grabbing; }
 
@@ -122,7 +110,7 @@ h1 {
     border: 1px solid rgba(0, 255, 170, 0.3);
     border-radius: 8px;
     padding: 12px 18px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
     pointer-events: none;
     display: none;
 }
@@ -131,45 +119,81 @@ h1 {
     position: absolute;
     top: 30px;
     right: 30px;
-    width: 340px;
+    width: 330px;
     max-height: 85vh;
     overflow-y: auto;
-    background: rgba(13, 17, 23, 0.7);
+    background: rgba(13, 17, 23, 0.75);
     border: 1px solid rgba(255, 170, 0, 0.3);
     border-right: 4px solid #ffaa00;
     border-radius: 8px 0 0 8px;
     padding: 20px 25px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     z-index: 100;
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #side-panel.hidden { opacity: 0; transform: translateX(40px); pointer-events: none; }
 
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.panel-flag {
+    height: 22px; 
+    width: auto;  
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(0, 255, 170, 0.2);
+}
+
 .panel-title { 
     color: #fff; 
     font-size: 20px; 
-    margin: 0 0 15px 0; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-    padding-bottom: 10px; 
+    margin: 0; 
     text-transform: uppercase; 
     letter-spacing: 1px;
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
 }
 
+.tooltip-title { display: flex; align-items: center; font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.5px;}
+
+.tooltip-flag {
+    height: 14px; 
+    width: auto;  
+    margin-right: 8px;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+}
+
 .panel-stat { font-size: 15px; color: #aaa; margin-bottom: 8px; display: flex; justify-content: space-between; font-weight: 500;}
-.panel-subtitle { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 12px 0; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
+.panel-subtitle { font-size: 13px; color: #8b949e; text-transform: uppercase; letter-spacing: 1.5px; margin: 25px 0 12px 0; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
 .panel-list { list-style: none; padding: 0; margin: 0; }
 .panel-list li { display: flex; justify-content: space-between; font-size: 14px; padding: 10px 0; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); font-weight: 500;}
 .panel-list li:last-child { border-bottom: none; }
 
-.p-name { color: #c9d1d9; }
-.p-val { color: #ffaa00; font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600;}
+/* =========================================
+   修改/新增：列表对齐与列表国旗
+   ========================================= */
+.p-name { display: flex; align-items: center; color: #c9d1d9; }
 
-.tooltip-title { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 5px; font-family: 'Space Grotesk', sans-serif; letter-spacing: 0.5px;}
+/* 列表里的长方形国旗 */
+.p-flag {
+    height: 12px; /* 列表字体大小适配 */
+    width: auto;  /* 保持原本比例 */
+    margin-right: 8px;
+    border-radius: 1px;
+    border: 1px solid rgba(255,255,255,0.1); /* 增加微弱边框使深色国旗清晰 */
+}
+/* ========================================= */
+
+.p-val { color: #ffaa00; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;}
+
 .tooltip-detail { font-size: 14px; color: #aaa; font-weight: 500;}
-
 .tooltip-highlight { color: #00ffaa; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
 .trade-highlight { color: #ffaa00; font-weight: 600; font-family: 'Space Grotesk', sans-serif;}
