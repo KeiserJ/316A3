@@ -269,3 +269,31 @@ h1 {
     right: -9px;
     top: -6px;
 }
+
+/* =========================================
+   新增：Acknowledgement 致谢声明模块样式
+   ========================================= */
+   .acknowledgement {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed rgba(0, 255, 170, 0.3); /* 一条极具科技感的虚线分割线 */
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    color: #8b949e; /* 柔和的灰色，不抢戏 */
+    line-height: 1.6;
+}
+
+.acknowledgement p {
+    margin: 0;
+}
+
+.acknowledgement strong {
+    color: #00ffaa; /* 荧光绿点缀标题 */
+    font-weight: 600;
+}
+
+.llm-note {
+    margin-top: 5px !important;
+    font-style: italic;
+    opacity: 0.7;
+}
